@@ -64,14 +64,16 @@ arrival_rates <- estimate_arrival_rates(bike_data)
 # View the results
 print(arrival_rates, n = 10)
 
-print(min(arrival_rates$start_station))
-print(max(arrival_rates$start_station))
-print(typeof(arrival_rates$start_station))
+arrival_rates$start_station <- as.numeric(arrival_rates$start_station)
+arrival_rates$end_station <- as.numeric(arrival_rates$end_station)
+
+print(min(arrival_rates$end_station))
+print(max(arrival_rates$end_station))
 
 find_lambda_max <- function(data){
   
   lambda_maxes <- data %>%
-    complete(start_station, end_station, hour = 0:23, fill = list(mu_hat = 0)) %>%
+    complete(start_station = 2:24, end_station = 2:24, hour = 0:23, fill = list(mu_hat = 0)) %>%
     group_by(start_station, end_station) %>%
     mutate(lambda_max = max(mu_hat)) %>%
     arrange(hour, start_station, end_station)
