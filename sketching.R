@@ -1,5 +1,7 @@
 library(tidyverse)
-bike_data <- read_csv("~/Downloads/1560/Data/sample_bike.csv")
+library(lubridate)
+
+bike_data <- read_csv("data/sample_bike.csv")
 
 estimate_arrival_rates <- function(data) {
   
