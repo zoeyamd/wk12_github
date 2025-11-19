@@ -56,10 +56,23 @@ estimate_arrival_rates <- function(data) {
   return(mu_hat)
 }
 
-
-
 # Estimate arrival rates
 arrival_rates <- estimate_arrival_rates(bike_data)
 
 # View the results
 print(arrival_rates, n = 10)
+
+find_lambda_max <- function(data){
+  
+  lambda_maxes <- data %>%
+    group_by(start_station, end_station) %>%
+    complete(hour = 0:23, fill = list(mu_hat = 0)) %>%
+    ungroup() %>%
+    group_by(start_station, end_station) %>%
+    mutate(lambda_max = max(mu_hat)) %>%
+    arrange(hour, start_station, end_station)
+  
+  return(lambda_maxes)
+}
+
+set<- find_lambda_max(arrival_rates)
