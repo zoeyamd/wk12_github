@@ -63,7 +63,6 @@ arrival_rates <- estimate_arrival_rates(bike_data)
 print(arrival_rates, n = 10)
 
 find_lambda_max <- function(data){
-  
   lambda_maxes <- data %>%
     group_by(start_station, end_station) %>%
     complete(hour = 0:23, fill = list(mu_hat = 0)) %>%
@@ -71,10 +70,10 @@ find_lambda_max <- function(data){
     group_by(start_station, end_station) %>%
     mutate(lambda_max = max(mu_hat)) %>%
     arrange(hour, start_station, end_station)
-  
   return(lambda_maxes)
 }
 
-set<- find_lambda_max(arrival_rates)
+complete_estimated_arrivals <- find_lambda_max(arrival_rates)
+complete_estimated_arrivals <- complete_estimated_arrivals %>%
+                                    filter(start_station != "15")
 
-sum(unique(arrival_rates$start_station))
