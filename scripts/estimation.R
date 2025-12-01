@@ -1,7 +1,18 @@
-library(tidyverse)
-bike_data <- read_csv("~/Downloads/1560/Data/sample_bike.csv")
-estimation <- estimation %>%
-  tidyr::drop_na(start_station, end_station)
+#************************************* ESTIMATION ************************************#
+#                                                                                     #
+#                                                                                     #
+# This code generates the estimated arrival rates of the bike data sample.            #
+#*************************************************************************************#
+
+
+#' Estimate arrival rates
+#'
+#' @description uses an unbiased estimator to estimate the arrival rate
+#' of every start_station, end_station, hour trio in the data 
+#' 
+#' @param data tibble - contains bike ridership data
+#' 
+#' @return a tibble that contains the desired arrival rates
 
 estimate_arrival_rates <- function(data) {
   
@@ -58,15 +69,18 @@ estimate_arrival_rates <- function(data) {
   return(mu_hat)
 }
 
-# Estimate arrival rates
+#estimate arrival rates of bike sample
 arrival_rates <- estimate_arrival_rates(bike_data)
 
-# View the results
+#view the results
 print(arrival_rates, n = 10)
 
+#function to find lambda max of routes and complete hourly rates for each route
 find_lambda_max <- function(data){
   lambda_maxes <- data %>%
     group_by(start_station, end_station) %>%
+    
+    #complete time series and fill with 0s 
     complete(hour = 0:23, fill = list(mu_hat = 0)) %>%
     ungroup() %>%
     group_by(start_station, end_station) %>%
@@ -75,7 +89,10 @@ find_lambda_max <- function(data){
   return(lambda_maxes)
 }
 
+#generate complete estimated arrival rates data frame
 complete_estimated_arrivals <- find_lambda_max(arrival_rates)
+
+#remove route without necessary data
 complete_estimated_arrivals <- complete_estimated_arrivals %>%
                                     filter(start_station != "15")
 
