@@ -1,7 +1,7 @@
 library(tidyverse)
-library(lubridate)
-
-bike_data <- read_csv("data/sample_bike.csv")
+bike_data <- read_csv("~/Downloads/1560/Data/sample_bike.csv")
+estimation <- estimation %>%
+  tidyr::drop_na(start_station, end_station)
 
 estimate_arrival_rates <- function(data) {
   
@@ -64,21 +64,18 @@ arrival_rates <- estimate_arrival_rates(bike_data)
 # View the results
 print(arrival_rates, n = 10)
 
-arrival_rates$start_station <- as.numeric(arrival_rates$start_station)
-arrival_rates$end_station <- as.numeric(arrival_rates$end_station)
-
-print(min(arrival_rates$end_station))
-print(max(arrival_rates$end_station))
-
 find_lambda_max <- function(data){
-  
   lambda_maxes <- data %>%
-    complete(start_station = 2:24, end_station = 2:24, hour = 0:23, fill = list(mu_hat = 0)) %>%
+    group_by(start_station, end_station) %>%
+    complete(hour = 0:23, fill = list(mu_hat = 0)) %>%
+    ungroup() %>%
     group_by(start_station, end_station) %>%
     mutate(lambda_max = max(mu_hat)) %>%
     arrange(hour, start_station, end_station)
-  
   return(lambda_maxes)
 }
 
-arrival_data <- find_lambda_max(arrival_rates)
+complete_estimated_arrivals <- find_lambda_max(arrival_rates)
+complete_estimated_arrivals <- complete_estimated_arrivals %>%
+                                    filter(start_station != "15")
+
