@@ -1,9 +1,13 @@
 library(tidyverse)
-bike_data <- read_csv("~/Downloads/1560/Data/sample_bike.csv")
-estimation <- estimation %>%
-  tidyr::drop_na(start_station, end_station)
 
+# TODO: add function documentation
 estimate_arrival_rates <- function(data) {
+  # converts times to POSIXct format
+  data <- data %>%
+    mutate(
+      start_time = as.POSIXct(start_time, format = "%Y-%m-%d %H:%M:%S"),
+      end_time   = as.POSIXct(end_time,   format = "%Y-%m-%d %H:%M:%S")
+    )
   
   # compute the average number of trips per hour between each pair
   x_hat <- data %>%
@@ -26,7 +30,7 @@ estimate_arrival_rates <- function(data) {
   
   # add hour markers so we can get cumulative time
   dates <- unique(as_date(trips_long$time))
-  hours <- c(seq(0,23,1),seq(0,23,1)+0.9999999)
+  hours <- c(seq(0,23,1), seq(0,23,1) + 0.9999999)
   stations <- unique(trips_long$station)
   hr_pts <- expand.grid(time = dates, hour = hours, 
                         station = stations) %>%
@@ -58,20 +62,28 @@ estimate_arrival_rates <- function(data) {
   return(mu_hat)
 }
 
-# Estimate arrival rates
+# TODO: add documentation
+# completes arrival rates 
+complete_arrival_rates <- function(arrival_rates) {
+  arrival_rates <- arrival_rates %>%
+     mutate(start_station = as.numeric(start_station),
+            end_station = as.numeric(end_station)) %>%
+     complete(hour = 0:23, start_station = 2:24, end_station = 2:24, 
+              fill = list(mu_hat = 0, avg_trips = 0, avg_avail = 1))
+  return(arrival_rates)
+}
+
+# estimate arrival rates
 arrival_rates <- estimate_arrival_rates(bike_data)
 
-# View the results
+# view the results
 print(arrival_rates, n = 10)
 
+# TODO: Add function documentation
 find_lambda_max <- function(data){
   lambda_maxes <- data %>%
     group_by(start_station, end_station) %>%
-    complete(hour = 0:23, fill = list(mu_hat = 0)) %>%
-    ungroup() %>%
-    group_by(start_station, end_station) %>%
-    mutate(lambda_max = max(mu_hat)) %>%
-    arrange(hour, start_station, end_station)
+    summarize(lambda_max = max(mu_hat))
   return(lambda_maxes)
 }
 

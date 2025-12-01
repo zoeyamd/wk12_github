@@ -25,7 +25,7 @@ optimization_prop <- function(estimation, fleet_size, seed){
   current_inventory <- initialize_inventory(initial_inventory, simulated_trips,
                                          estimation)
   
-#bike movement + happiness    
+# bike movement + happiness    
   happy_riders <- 0 
   unhappy_riders <- 0
 
