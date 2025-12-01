@@ -1,0 +1,4 @@
+"fleet_size","happiness_rate","happy_riders","unhappy_riders","top_placement_station","top_placement_count"
+10,0.368386675375572,1128,1934,"10",1
+50,0.684846505551927,2097,965,"17",4
+300,0.937295885042456,2870,192,"17",25
