@@ -69,13 +69,19 @@ estimate_arrival_rates <- function(data) {
   return(mu_hat)
 }
 
-#estimate arrival rates of bike sample
-arrival_rates <- estimate_arrival_rates(bike_data)
+#' Calculate Peak Arrival Rate (Lambda Max)
+#'
+#' @description calculates maximum estimated arrival rate for every unique route 
+#' (start_station to end_station), this function across all 24 hours. 
+#' 
+#' @param data tibble - contains the estimated hourly arrival rates 
+#' for various routes, including the columns {start_station}, {end_station}, 
+#' {hour}, and {mu_hat}.
+#' 
+#' @return tibble similar to the input, but with an added column, {lambda_max}, 
+#' containing the peak hourly rate for that specific route replicated across all 
+#' 24 hours.
 
-#view the results
-print(arrival_rates, n = 10)
-
-#function to find lambda max of routes and complete hourly rates for each route
 find_lambda_max <- function(data){
   lambda_maxes <- data %>%
     group_by(start_station, end_station) %>%
@@ -89,10 +95,4 @@ find_lambda_max <- function(data){
   return(lambda_maxes)
 }
 
-#generate complete estimated arrival rates data frame
-complete_estimated_arrivals <- find_lambda_max(arrival_rates)
-
-#remove route without necessary data
-complete_estimated_arrivals <- complete_estimated_arrivals %>%
-                                    filter(start_station != "15")
 
