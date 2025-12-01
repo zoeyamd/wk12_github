@@ -1,0 +1,76 @@
+#************************************* ANALYSIS **************************************#
+#                                                                                     #
+#                                                                                     #
+# This code runs optimization pipeline across multiple fleet sizes.                   #
+#*************************************************************************************#
+
+
+#load dependencies and funcions
+library(dplyr)
+library(tidyr)
+
+#replace path to where your functions are defined
+source("/Users/zoeybug/Documents/GitHub/wk12_github/scripts/estimation.R")
+source("/Users/zoeybug/Documents/GitHub/wk12_github/scripts/utilities.R")
+source("/Users/zoeybug/Documents/GitHub/wk12_github/scripts/simulation.R")
+source("/Users/zoeybug/Documents/GitHub/wk12_github/scripts/placement.R")
+
+#load input data
+#replace 'path/to/your/data.csv' and 'read.csv' with your actual data loading command.
+bike_data <- read_csv("~/Downloads/1560/Data/sample_bike.csv")
+
+#run estimation functions to get estimation data
+estimated_arrivals <- estimate_arrival_rates(bike_data)
+complete_estimated_arrivals <- find_lambda_max(estimated_arrivals)
+complete_estimated_arrivals <- complete_estimated_arrivals %>%
+  filter(start_station != "15")
+
+#define fleet sizes and set seed
+fleet_sizes_to_test <- c(10, 50, 300) 
+seed <- 42
+
+#wrapper function for running and summarizing results
+simulate_and_analyze <- function(fleet_size, estimation_data, seed) {
+  
+  cat("Running simulation for Fleet Size:", fleet_size, "\n")
+  
+  #run optimization and simulation function
+  results <- optimization_prop(
+    estimation = estimation_data, 
+    fleet_size = fleet_size, 
+    seed = seed)
+  
+  #extract top placement station (for insight)
+  top_placement <- results$initial_inventory %>%
+    arrange(desc(initial_count)) %>%
+    head(1)
+  
+  #extract and format key indicators
+  summary_df <- data.frame(
+    fleet_size = fleet_size,
+    happiness_rate = results$system_happiness_rate,
+    happy_riders = results$happy_riders,
+    unhappy_riders = results$unhappy_riders,
+    top_placement_station = top_placement$station,
+    top_placement_count = top_placement$initial_count)
+  
+  #return the concise summary data frame
+  return(summary_df)
+}
+
+#run wrapper for fleet size [1]
+fleet_1 <- simulate_and_analyze(fleet_sizes_to_test[1], complete_estimated_arrivals, seed)
+
+#run wrapper for fleet size [2]
+fleet_2 <- simulate_and_analyze(fleet_sizes_to_test[2], complete_estimated_arrivals, seed)
+
+#run wrapper for fleet size [3]
+fleet_3 <- simulate_and_analyze(fleet_sizes_to_test[3], complete_estimated_arrivals, seed)
+
+#combine resulting data frame into single comparison table
+comparison_table <- bind_rows(fleet_1, fleet_2, fleet_3)
+print(comparison_table)
+
+cat("\n--- Insight Summary ---\n")
+cat("The results show how increasing the fleet size directly improves the System Happiness Rate (demand met).\n")
+
