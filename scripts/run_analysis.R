@@ -71,6 +71,30 @@ fleet_3 <- simulate_and_analyze(fleet_sizes_to_test[3], complete_estimated_arriv
 comparison_table <- bind_rows(fleet_1, fleet_2, fleet_3)
 print(comparison_table)
 
-cat("\n--- Insight Summary ---\n")
-cat("The results show how increasing the fleet size directly improves the System Happiness Rate (demand met).\n")
+#save comparison table as csv for results folder
+write.csv(comparison_table, file = paste0("results", "/fleet_size_comparison_table.csv"), 
+  row.names = FALSE)
+
+#generate plot of happiness rate vs fleet size
+happiness_plot <- ggplot(comparison_table, aes(x = fleet_size, y = happiness_rate)) +
+  geom_point(size = 4, color = "steelblue") +
+  geom_line(color = "steelblue", linewidth = 1) +
+  geom_text(aes(label = paste0(round(happiness_rate * 100, 1), "%")), 
+            vjust = -1.5, color = "black") +
+  labs(
+    title = "System Performance vs. Fleet Size (Prop. Placement)",
+    x = "Total Fleet Size",
+    y = "System Happiness Rate (Demand Met)"
+  ) +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal(base_size = 14)
+
+# Save the plot as a PNG file
+ggsave(filename = "fleet_size_happiness_plot.png", 
+  plot = happiness_plot, 
+  path = "results", 
+  width = 8, 
+  height = 5, 
+  units = "in")
+
 
