@@ -1,5 +1,7 @@
 library(tidyverse)
 bike_data <- read_csv("~/Downloads/1560/Data/sample_bike.csv")
+estimation <- estimation %>%
+  tidyr::drop_na(start_station, end_station)
 
 estimate_arrival_rates <- function(data) {
   

@@ -19,32 +19,7 @@ simulate_day <- function(estimation) {
     
     rates <- route_data$mu_hat
 
-    
-    time <- 0
-    accepted_arrivals <- c()
-    end_time_horizon <- 24
-  
-#distribution 
-    while(time < end_time_horizon) {
-      
-      sample_time <- rexp(1, rate = lambda_max)
-      time <- time + sample_time
-      
-      if (time >= end_time_horizon) {
-        break
-      }
-      
-#thinning
-      current_hour_index <- floor(time) + 1 #0:23 to 1:24
-      current_mu_hat <- rates[current_hour_index]
-      
-      acceptance_prob <- current_mu_hat / lambda_max
-      U <- runif(1)
-      
-      if (U <= acceptance_prob) {
-        accepted_arrivals <- c(accepted_arrivals, time)
-      }
-    }
+    accepted_arrivals <- simulate_route_arrivals(rates, lambda_max)
 
 #storing      
     route_results <- data.frame(
