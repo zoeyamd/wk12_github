@@ -4,7 +4,27 @@
 # This code generates the initial placement of bikes for optimal rider happiness.     #
 #*************************************************************************************#
 
-#function for placement based on initial proportions
+#' Bike Placement Optimization and Simulation (Probability Method)
+#'
+#' @description calculates the optimal initial bike placement based on the 
+#' likelihood of trip starts at hour 0.runs a full 24-hour simulation 
+#' using the generated demand queue to evaluate the placement's effectiveness.
+#' 
+#' @param estimation tibble - estimated arrival rates (mu_hat) and peak rates 
+#' (lambda_max) for all station-to-station routes across 24 hours.
+#' @param fleet_size numeric - total number of bikes available for initial 
+#' placement.
+#' @param seed numeric - seed value used to ensure the simulation is 
+#' reproducible.
+#' 
+#' @return A list containing the full simulation results:
+#' {initial_inventory}:}proposed initial bike placement at each station.
+#' {final_inventory}:} bike counts at each station after 24 hours of 
+#' simulated activity.
+#' {happy_riders}:} total count of successful trip requests.
+#' {unhappy_riders}:} total count of failed trip requests.
+#' {system_happiness_rate}:} performance metric
+
 optimization_prop <- function(estimation, fleet_size, seed){
   
 #simulation set up

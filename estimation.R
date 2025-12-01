@@ -4,11 +4,16 @@
 # This code generates the estimated arrival rates of the bike data sample.            #
 #*************************************************************************************#
 
-#loading libraries and reading in data
-library(tidyverse)
-bike_data <- read_csv("~/Downloads/1560/Data/sample_bike.csv")
 
-#initial function to estimate arrival rates
+#' Estimate arrival rates
+#'
+#' @description uses an unbiased estimator to estimate the arrival rate
+#' of every start_station, end_station, hour trio in the data 
+#' 
+#' @param data tibble - contains bike ridership data
+#' 
+#' @return a tibble that contains the desired arrival rates
+
 estimate_arrival_rates <- function(data) {
   
   # compute the average number of trips per hour between each pair

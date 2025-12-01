@@ -4,7 +4,20 @@
 # This code generates the simulated ride requests for a 24-hour period.               #
 #*************************************************************************************#
 
-#simulation function
+#' Simulate Daily Ridership Demand
+#'
+#' @description generates a chronologically ordered tibble of individual trip requests 
+#' for a full 24-hour period. uses Non-Homogeneous Poisson Process (NHPP) 
+#' thinning algorithm to convert the estimated hourly rates (mu_hat) into 
+#' specific, continuous arrival times for every unique route.
+#' 
+#' @param estimation tibble - estimated arrival rates, including start_station, 
+#' end_station, hour, mu_hat (hourly rate), and lambda_max (peak rate) for all 
+#' routes.
+#' 
+#' @return tibble - time-ordered simulated demand queue, with columns for 
+#' start_station, end_station, and the fractional arrival_time.
+
 simulate_day <- function(estimation) {
   
   #intialize list to store simulated trips
