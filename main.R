@@ -23,3 +23,4 @@ arrival_rates <- complete_arrival_rates(arrival_rates)
 lambda_max <- find_lambda_max(arrival_rates)
 
 ## 3) SIMULATION
+

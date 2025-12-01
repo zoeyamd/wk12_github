@@ -1,11 +1,9 @@
-library(tidyverse)
-
 optimization_prop <- function(estimation, fleet_size, seed){
-#simulation
+# simulation
   set.seed(seed)
   simulated_trips <- simulate_day(estimation)
 
-#initial placement
+# initial placement
   placement_props <- estimation %>%
     filter(hour == 0) %>%
     group_by(start_station) %>%
@@ -41,7 +39,7 @@ optimization_prop <- function(estimation, fleet_size, seed){
     current_inventory[start_station] <- current_inventory[start_station] - 1
     current_inventory[end_station] <- current_inventory[end_station] + 1
   } else {
-    #failure
+    # failure
     unhappy_riders <- unhappy_riders + 1
     }
   }

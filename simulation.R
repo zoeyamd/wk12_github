@@ -1,3 +1,6 @@
+library(tidyverse)
+
+# TODO: write documentation
 simulate_day <- function(estimation) {
   
   all_results_list <- list() 

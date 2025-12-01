@@ -1,3 +1,5 @@
+library(tidyverse)
+
 simulate_route_arrivals <- function(rates, lambda_max, end_time_horizon = 24) {
   time <- 0
   accepted_arrivals <- c()

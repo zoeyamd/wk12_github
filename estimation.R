@@ -1,6 +1,13 @@
 library(tidyverse)
 
-# TODO: add function documentation
+#' Estimate arrival rates
+#'
+#' @description uses an unbiased estimator to estimate the arrival rate
+#' of every start_station, end_station, hour trio in the data 
+#' 
+#' @param data tibble - contains bike ridership data
+#' 
+#' @return a tibble that contains the desired arrival rates
 estimate_arrival_rates <- function(data) {
   # converts times to POSIXct format
   data <- data %>%
@@ -69,15 +76,11 @@ complete_arrival_rates <- function(arrival_rates) {
      mutate(start_station = as.numeric(start_station),
             end_station = as.numeric(end_station)) %>%
      complete(hour = 0:23, start_station = 2:24, end_station = 2:24, 
-              fill = list(mu_hat = 0, avg_trips = 0, avg_avail = 1))
+              fill = list(mu_hat = 0, avg_trips = 0, avg_avail = 1)) %>%
+     mutate(start_station = as.character(start_station),
+            end_station = as.character(end_station))
   return(arrival_rates)
 }
-
-# estimate arrival rates
-arrival_rates <- estimate_arrival_rates(bike_data)
-
-# view the results
-print(arrival_rates, n = 10)
 
 # TODO: Add function documentation
 find_lambda_max <- function(data){
@@ -86,8 +89,3 @@ find_lambda_max <- function(data){
     summarize(lambda_max = max(mu_hat))
   return(lambda_maxes)
 }
-
-complete_estimated_arrivals <- find_lambda_max(arrival_rates)
-complete_estimated_arrivals <- complete_estimated_arrivals %>%
-                                    filter(start_station != "15")
-
