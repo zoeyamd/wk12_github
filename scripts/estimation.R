@@ -70,14 +70,11 @@ estimate_arrival_rates <- function(data) {
 }
 
 #estimate arrival rates of bike sample
-arrival_rates <- estimate_arrival_rates(bike_data)
-
-#view the results
-print(arrival_rates, n = 10)
+arrival_rates <- estimate_arrival_rates(data)
 
 #function to find lambda max of routes and complete hourly rates for each route
-find_lambda_max <- function(data){
-  lambda_maxes <- data %>%
+find_lambda_max <- function(arrival_rates){
+  lambda_maxes <- arrival_rates %>%
     group_by(start_station, end_station) %>%
     
     #complete time series and fill with 0s 
@@ -89,10 +86,5 @@ find_lambda_max <- function(data){
   return(lambda_maxes)
 }
 
-#generate complete estimated arrival rates data frame
-complete_estimated_arrivals <- find_lambda_max(arrival_rates)
 
-#remove route without necessary data
-complete_estimated_arrivals <- complete_estimated_arrivals %>%
-                                    filter(start_station != "15")
 
