@@ -25,7 +25,7 @@ complete_estimated_arrivals <- find_lambda_max(estimated_arrivals)
 complete_estimated_arrivals <- complete_estimated_arrivals %>%
   filter(start_station != "15")
 
-#define fleet sizes and set seed
+# define fleet sizes and set seed
 fleet_sizes_to_test <- c(10, 50, 300) 
 seed <- 42
 

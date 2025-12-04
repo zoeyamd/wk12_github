@@ -13,7 +13,6 @@
 #' @param data tibble - contains bike ridership data
 #' 
 #' @return a tibble that contains the desired arrival rates
-
 estimate_arrival_rates <- function(data) {
   
   # compute the average number of trips per hour between each pair
@@ -69,10 +68,10 @@ estimate_arrival_rates <- function(data) {
   return(mu_hat)
 }
 
-#estimate arrival rates of bike sample
-arrival_rates <- estimate_arrival_rates(data)
+# estimate arrival rates of bike sample
+# arrival_rates <- estimate_arrival_rates(data)
 
-#function to find lambda max of routes and complete hourly rates for each route
+# function to find lambda max of routes and complete hourly rates for each route
 find_lambda_max <- function(arrival_rates){
   lambda_maxes <- arrival_rates %>%
     group_by(start_station, end_station) %>%
