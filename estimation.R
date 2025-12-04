@@ -5,16 +5,15 @@ library(tidyverse)
 #' @description uses an unbiased estimator to estimate the arrival rate
 #' of every start_station, end_station, hour trio in the data 
 #' 
-#' @param data tibble - contains bike ridership data
+#' @param data data frame/tibble - contains bike ridership data
 #' 
-#' @return a tibble that contains the desired arrival rates
+#' @return a tibble that contains the desired estimated arrival rates, along
+#' with the intermediate involved in calculation
 estimate_arrival_rates <- function(data) {
   # converts times to POSIXct format
   data <- data %>%
-    mutate(
-      start_time = as.POSIXct(start_time, format = "%Y-%m-%d %H:%M:%S"),
-      end_time   = as.POSIXct(end_time,   format = "%Y-%m-%d %H:%M:%S")
-    )
+    mutate(start_time = as.POSIXct(start_time, format = "%Y-%m-%d %H:%M:%S"),
+           end_time   = as.POSIXct(end_time,   format = "%Y-%m-%d %H:%M:%S"))
   
   # compute the average number of trips per hour between each pair
   x_hat <- data %>%
@@ -69,22 +68,17 @@ estimate_arrival_rates <- function(data) {
   return(mu_hat)
 }
 
-# TODO: add documentation
-# completes arrival rates 
-complete_arrival_rates <- function(arrival_rates) {
-  arrival_rates <- arrival_rates %>%
-     mutate(start_station = as.numeric(start_station),
-            end_station = as.numeric(end_station)) %>%
-     complete(hour = 0:23, start_station = 2:24, end_station = 2:24, 
-              fill = list(mu_hat = 0, avg_trips = 0, avg_avail = 1)) %>%
-     mutate(start_station = as.character(start_station),
-            end_station = as.character(end_station))
-  return(arrival_rates)
-}
-
-# TODO: Add function documentation
-find_lambda_max <- function(data){
-  lambda_maxes <- data %>%
+#' Finds the max hourly arrival rate between stations
+#'
+#' @description for every start, end station pair in the data, determines the 
+#' maximum estimated hourly arrival rate
+#' 
+#' @param arrival_rates tibble - contains estimated arrival rates
+#' 
+#' @return a tibble with the max hourly estimated arrival rate for every 
+#' start, end station pair present in the data
+find_lambda_max <- function(arrival_rates) {
+  lambda_maxes <- arrival_rates %>%
     group_by(start_station, end_station) %>%
     summarize(lambda_max = max(mu_hat))
   return(lambda_maxes)

@@ -5,6 +5,8 @@ simulate_day <- function(estimation) {
   
   all_results_list <- list() 
   
+  # finds all unique routes in our data (routes not present have assumed
+  # 0 hourly trips for all hours)
   unique_routes <- estimation %>%
     select(start_station, end_station) %>%
     distinct()
@@ -24,7 +26,7 @@ simulate_day <- function(estimation) {
 
     accepted_arrivals <- simulate_route_arrivals(rates, lambda_max)
 
-#storing      
+    #storing      
     route_results <- data.frame(
       start_station = rep(start_s, length(accepted_arrivals)),
       end_station = rep(end_s, length(accepted_arrivals)),
